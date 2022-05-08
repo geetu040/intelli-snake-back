@@ -3,13 +3,14 @@
 	padding: 0;
 	box-sizing: border-box;
 }
+
 :root {
-	--win_size: 98vmin;
 	--screen_ratio: 11vmin;
 	--top_size: 8%;
 	--right_size: 18%;
 	--border_size: 0.4vmin;
 	--ins_size: 95%;
+	--loading_size: 10vmin;
 
 	--food_size: 100%;
 	--head_size: 100%;
@@ -22,9 +23,19 @@
 	--bg_color_dark: rgb(87, 86, 86);
 	--bg_color_darker: rgb(51, 50, 50);
 }
+
 body {
 	background-color: var(--bg_color_lighter);
+	overflow: hidden;
+	box-sizing: border-box;
+	width: 100vw;
+	/* height: 100vh; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	/* border: 2px solid rgba(255, 0, 0, 0.533); */
 }
+
 #ins {
 	position: absolute;
 	width: var(--ins_size);
@@ -34,7 +45,6 @@ body {
 	top: calc(50% - var(--ins_size)/2);
 	z-index: 3;
 	padding: 2%;
-	/* font-size: 125%; */
 	font-size: 2.25vmin;
 	background-color: var(--bg_color_lighterer);
 	color: var(--bg_color_darker);
@@ -43,35 +53,56 @@ body {
 	font-family: monospace;
 	display: none;
 }
-#ins>ul{
+
+#ins>ul {
 	padding-left: 3%;
 }
-#ins>b{
+
+#ins>b {
 	background-color: inherit;
 	color: black;
 	text-decoration: double;
 }
-#ins>a {
-	color: inherit;
+
+a {
+	color: black;
 }
-#ins>span {
+
+li>span {
 	background-color: var(--bg_color_lighter);
+}
+#ins>.heading1 {
+	background-color: var(--bg_color_lighter);
+}
+.big-container {
+	/* border: 2px solid rgba(0, 0, 255, 0.438); */
+	box-sizing: border-box;
+	width: 100vw;
+	/* height: 100vh; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .container {
 	border: var(--border_size) solid black;
 	width: var(--win_size);
 	height: calc(var(--win_size) - var(--screen_ratio));
-	margin: calc((100vmin - var(--win_size) + var(--screen_ratio) - var(--top_size)/3)/2) auto;
+	/* margin: calc((100vmin - var(--win_size) + var(--screen_ratio) - var(--top_size)/3)/2) auto; */
+	/* margin-top: calc(10vh) ;
+	margin-left: auto;
+	margin-right: auto; */
 	display: flex;
 	flex-direction: row;
 	background-color: var(--bg_color_lighterer);
 }
+
 .sub-container {
 	border-right: var(--border_size) solid var(--bg_color_darker);
 	display: flex;
 	flex-direction: column;
 	width: calc(100% - var(--right_size));
 }
+
 .top {
 	width: 100%;
 	height: var(--top_size);
@@ -80,7 +111,8 @@ body {
 	padding: var(--border_size);
 	background-color: var(--bg_color_light);
 }
-.top > div {
+
+.top>div {
 	font-weight: bolder;
 	font-family: monospace;
 	font-family: 'Courier New', Courier, monospace;
@@ -93,17 +125,19 @@ body {
 	align-items: center;
 	width: 30%;
 }
-.top > div:hover {
+
+.top>div:hover {
 	cursor: default;
 }
+
 .game {
 	padding: 0.2%;
 	height: 100%;
 	border-top: var(--border_size) solid var(--bg_color_darker);
 
 }
-.right {
 
+.right {
 	width: var(--right_size);
 	display: flex;
 	flex-direction: column;
@@ -111,7 +145,8 @@ body {
 	padding: 0.8%;
 	background-color: var(--bg_color_lighter);
 }
-.right > button {
+
+.right>button {
 	font-weight: bolder;
 	font-family: monospace;
 	font-family: 'Courier New', Courier, monospace;
@@ -121,30 +156,41 @@ body {
 	border: 0.3vmin solid var(--bg_color_dark);
 	background-color: white;
 	position: relative;
+	overflow: hidden;
 }
-.right > button:hover {
+
+.right>button:hover {
 	outline: 0.1vmin solid var(--bg_color_dark);
 	box-shadow: 3px 3px 3px var(--bg_color_norm);
 	background-color: var(--bg_color_light);
 	color: black;
 	cursor: pointer;
 }
-.right > button:disabled {
+
+.right>button:disabled {
 	cursor: not-allowed;
 	color: inherit;
+	color: var(--bg_color_dark);
+	background-color: var(--bg_color_lighterer);
 }
-.right > button:disabled:hover {
+
+.right>button:disabled:hover {
 	background-color: inherit;
+	box-shadow: none;
+	outline: none;
 }
+
 .game {
 	display: flex;
 	flex-wrap: wrap;
 	position: relative;
 }
+
 .game>div {
-	width: calc((100%/var(--cols)) );
-	height: calc((100%/var(--rows)) );
+	width: calc((100%/var(--cols)));
+	height: calc((100%/var(--rows)));
 }
+
 .wall {
 	box-sizing: border-box;
 	margin: 0;
@@ -153,9 +199,11 @@ body {
 	border: 0.05vmin solid black;
 
 }
+
 .empty {
 	background-color: var(--bg_color_lighterer);
 }
+
 .food {
 	box-sizing: border-box;
 	background-color: aqua;
@@ -164,9 +212,10 @@ body {
 	border-radius: 45%;
 	z-index: 1;
 	margin: calc(((50% - var(--food_size)/2)/var(--rows))) calc(((50% - var(--food_size)/2)/var(--cols)));
-	width: calc( (var(--food_size)/var(--cols)) ) !important;
-	height: calc( (var(--food_size)/var(--rows)) ) !important;
+	width: calc((var(--food_size)/var(--cols))) !important;
+	height: calc((var(--food_size)/var(--rows))) !important;
 }
+
 .head {
 	background-color: rgb(255, 0, 0);
 	border: 0.3vmin solid black;
@@ -174,21 +223,58 @@ body {
 	border-radius: 50%;
 	z-index: 2;
 	margin: calc(((50% - var(--head_size)/2)/var(--rows))) calc(((50% - var(--head_size)/2)/var(--cols)));
-	width: calc( (var(--head_size)/var(--cols)) ) !important;
-	height: calc( (var(--head_size)/var(--rows)) ) !important;
+	width: calc((var(--head_size)/var(--cols))) !important;
+	height: calc((var(--head_size)/var(--rows))) !important;
 }
+
 .body {
 	box-sizing: border-box;
-	background: rgb(249,0,0);
-	/* background: radial-gradient(circle, rgba(249,0,0,0.60) 41%, rgba(245,252,69,0.30) 58%);
-	border: 0.1vmin solid black;
-	outline: 0.1vmin solid red; */
+	background: rgb(249, 0, 0);
 	background: radial-gradient(circle, rgba(183, 1, 1, 0.492) 41%, rgba(116, 119, 33, 0.3) 58%);
 	border: 0.1vmin solid black;
 	outline: 0.2vmin solid red;
 	border-radius: 50%;
 	z-index: 1;
-	margin: calc( ((50% - var(--body_size)/2)/var(--rows)) );
-	width: calc( (var(--body_size)/var(--cols)) ) !important;
-	height: calc( (var(--body_size)/var(--rows)) ) !important;
+	margin: calc(((50% - var(--body_size)/2)/var(--rows)));
+	width: calc((var(--body_size)/var(--cols))) !important;
+	height: calc((var(--body_size)/var(--rows))) !important;
+}
+
+#loading {
+	position: absolute;
+	left: calc((50% - var(--loading_size)));
+	top: calc((50% - var(--loading_size) - calc(100% / var(--rows))));
+	visibility: hidden;
+}
+.lds-hourglass {
+	display: inline-block;
+	position: relative;
+}
+
+.lds-hourglass:after {
+	content: " ";
+	display: block;
+	border-radius: 50%;
+	width: 0;
+	height: 0;
+	margin: 0;
+	border: var(--loading_size) solid;
+	border-color: rgba(0, 0, 0, 0.355) transparent;
+	animation: lds-hourglass 1.2s infinite;
+}
+
+@keyframes lds-hourglass {
+	0% {
+		transform: rotate(0);
+		animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+	}
+
+	50% {
+		transform: rotate(900deg);
+		animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+	}
+
+	100% {
+		transform: rotate(1800deg);
+	}
 }

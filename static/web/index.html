@@ -5,73 +5,123 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Intelli Snake</title>
-	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='snake.png') }}">
 	<style>
 		:root {
 			--rows: {{params.rows}};
 			--cols: {{params.cols}};
+			--win_size: {{params.win_size}}vmin;
 		}
 	</style>
 	<link rel="stylesheet" href="static/web/style.css">
 </head>
 <body>
+
+
 	<div class="container">
-		
 		<div class="sub-container">
 			<div class="top">
-				<div id="score" onclick="map.guide()">Score: <span id="score_span">0</span></div>
-				<div id="fouls" onclick="map.guide()">Fouls: <span id="fouls_span">0</span></div>
-				<div id="fouls" onclick="map.guide()">Steps: <span id="steps_span">0</span></div>
+				<div id="score">Score: <span id="score_span">0</span></div>
+				<div id="fouls">Fouls: <span id="fouls_span">0</span></div>
+				<div id="fouls">Steps: <span id="steps_span">0</span></div>
 			</div>
 			<div class="game">
 
+				<div id="loading" class="lds-hourglass"></div>
 				<div id="ins">
 
-					<b> Help Snake Fetch the food</b> <br>
+					<b class="heading1">Instructions</b> <br>
 					<ul>
-						<li> use arrow keys to move the Snake </li>
-						<li> use WASD to move the food </li>
+						<li> Use arrow keys
+							<img src="{{ url_for('static', filename='arrows.png') }}" alt="" width="6%">
+							to move the Snake
+						</li>
+						<li> Press Space at any time to pause the game </li>
+						<li> On Touch systems swipe the screen to control movement </li>
+						<li> Help Snake fetch the food and score higher! </li>
 						<li> You can automate the snake to catch food by itself </li>
-					</ul>
-					<br>
-					<b> A foul is commited when</b> <br>
+						<li> The game is basically an advanced version of: <a href="https://the-fetcher.herokuapp.com/" target="new">The Fetcher</a> </li>
+					</ul> <br>
+
+
+					<b class="heading1">Fouls</b> <br>
+					A foul is commited when the Snake
 					<ul>
-						<li> the snake eats itself </li>
-						<li> the snake hits the wall (collision needs to be enabled) </li>
-						<li> the automated snake fails to catch food in 100 steps </li>
+						<li> eats itself </li>
+						<li> hits the wall (collision needs to be enabled) </li>
+						<li> fails to catch food in {{params.steps_limit}} steps </li>
+					</ul> <br>
+
+
+					<b class="heading1">Automation</b> <br>
+					Two options are available for automation
+					<ul><br>
+						<li> <b> Fast Automation </b>
+							<ul>
+								<li>Snake moves faster than regular</li>
+								<li> An Asynchronous Http request is sent which returns the next {{params.automated_infos_count}} steps</li>
+								<li>Snake then moves through the loaded steps, meanwhile more requests are sent for more steps</li>
+								<li>Snake moves and requests are sent in parallel</li>
+							</ul>
+						</li> <br>
+						<li> <b> Automate </b>
+							<ul>
+								<li>Snake moves at regular speed</li>
+								<li>At each step a synchronous Http request is sent which returns with the next step</li>
+								<li>Snake waits for a request at each step</li>
+							</ul>
+						</li>
 					</ul>
-					<br>
-					<hr>
-					<br>
-					<h3> <b> Automation </b> </h3>
+					
+					<br><hr><br>
+					<b class="heading1"> AI behind Automation </b> <br>
 					<ul>
-						<li> For automation we have 2 different deep neural networks models </li>
+						<li> For automation we have 2 models built on Deep Neural Networks and Convolutianl Neural Networks </li>
 						<li> Both the models are based on keras API, using tensorflow, implementing Functional API and Sequential models. </li>
 						<li> The models return an array of directions sorted by preference </li>
 						<li> Snake then uses the first direction with most preference </li>
 						<li> If the first preferred direction doestnot help, snake uses the next preference</li>
+						<li> Since the Random Model has lesser accuracy, you'll find it commiting more fouls </li>
 					</ul>
 					<br>
-					<b>Fixed Model</b> <span>[Accuracy: 99.72%]</span> <br>
 					<ul>
 						<li>
-							It takes 2 inputs <br>
-							>> Possition of snake and food <br>
-							>> Availbale directions
-						</li>
-					</ul>
-					<b>Random Model</b> <span>[Accuracy: 94.74%]</span> <br>
-					<ul>
+							<b>Fixed Model</b> <span>[Accuracy: {{params.fixed_model_accuracy}}%]</span> <br>
+							<ul>
+								<li>
+									It takes 2 inputs
+									<ul>
+										<li> Possition of snake and food </li>
+										<li> Available directions </li>
+									</ul>
+								</li>
+								<li> It is based on Functional API and Sequential Models </li>
+								<li> Deep Neural Networks are involved </li>
+							</ul>
+						</li> <br>
 						<li>
-							It takes 3 inputs <br>
-							>> Image of the Map <br>
-							>> Possition of snake and food <br>
-							>> Availbale directions
+							<b>Random Model</b> <span>[Accuracy: {{params.random_model_accuracy}}%]</span> <br>
+							<ul>
+								<li>
+									It takes 3 inputs
+									<ul>
+										<li> Image of the Map </li>
+										<li> Possition of snake and food </li>
+										<li> Available directions </li>
+									</ul>
+								</li>
+								<li> Deep Neural Networks, along with Convolutianl Neural Networks are involved </li>
+								<li> It is based on Functional API, Sequential Model and Transfer Model (using Fixed Model as base) </li>
+								<li> Input 2 and Input 3 are transferred to Fixed Model, the output is then used with Input 1 by Sequential Models and Functional API which then generate a final output </li>
+
+							</ul>
 						</li>
 					</ul>
+
+
 					<br><hr>
 					To see the summary of models and the complete back end <br>
-					visit: <a href="https://github.com/geetu040/intelli-snake">Github Repository</a>
+					visit: <a href="https://github.com/geetu040/intelli-snake" target="new">Github Repository</a>
 
 				</div>
 
@@ -86,21 +136,24 @@
 			</div>
 		</div>
 		<div class="right">
-			<button id="btn_pause_auto" onclick="map.guide('close');map.pause_auto()">Automate</button>
-			<button id="btn_next_map" onclick="map.next_map()">Random Map</button>
-			<button id="btn_speeder" onclick="map.speeder()">Slower</button>
-			<button id="btn_collide" onclick="map.collide()">Enable Collision</button>
-			<button onclick="map.do('replace_food')">Replace Food</button>
-			<button onclick="map.do('replace_snake')">Replace Snake</button>
-			<button onclick="map.guide()">Guide</button>
+			<button id="btn_fast_automation">Fast Automation</button>
+			<button id="btn_pause_auto">Automate</button>
+			<button id="btn_next_map">Random Map</button>
+			<button id="btn_speeder">Slower</button>
+			<button id="btn_collide">Enable Collision</button>
+			<button id="btn_replace">Replace Food</button>
+			<button id="btn_guide">Guide</button>
 		</div>
 	</div>
+	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="https://livejs.com/live.js"></script>
+	<!-- <script type="text/javascript" src="https://livejs.com/live.js"></script> -->
 	<script>
 		rows = {{params.rows}}
 		cols = {{params.cols}}
+		win_size = {{params.win_size}}
 	</script>
+	<script src="static/web/swipe.js"></script>
 	<script src="static/web/script.js"></script>
 </body>
 </html>
